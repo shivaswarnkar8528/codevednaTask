@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./calc.css">
+
+</head>
+
+<body>
+    <div id="main">
+        <div class="cal-main" id="cal-main">
+            <div class="top">
+                <input type="text" class="outputScreen" id="outputScreen" />
+                <button class="calcBtn acbtn" onclick="btnClick('clear')">AC</button>
+            </div>
+            <div>
+                <button class="calcBtn" onclick="btnClick(9)">9</button>
+                <button class="calcBtn" onclick="btnClick(8)">8</button>
+                <button class="calcBtn" onclick="btnClick(7)">7</button>
+                <button class="calcBtn lastrow" onclick="btnClick('+')">+</button>
+            </div>
+            <div>
+                <button class="calcBtn" onclick="btnClick(4)">4</button>
+                <button class="calcBtn" onclick="btnClick(5)">5</button>
+                <button class="calcBtn" onclick="btnClick(6)">6</button>
+                <button class="calcBtn lastrow" onclick="btnClick('-')">-</button>
+            </div>
+            <div>
+                <button class="calcBtn" onclick="btnClick(1)">1</button>
+                <button class="calcBtn" onclick="btnClick(2)">2</button>
+                <button class="calcBtn" onclick="btnClick(3)">3</button>
+                <button class="calcBtn lastrow" onclick="btnClick('/')">/</button>
+            </div>
+            <div>
+                <button class="calcBtn" onclick="btnClick('.')">.</button>
+                <button class="calcBtn" onclick="btnClick('0')">0</button>
+                <button class="calcBtn " onclick="btnClick('=')">=</button>
+                <button class="calcBtn lastrow" onclick="btnClick('*')">*</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const solveExpression = () => {
+            expression = outputScreen.value;
+            try {
+                let res = eval(expression);
+                res = res % 1 != 0 ? res.toFixed(3) : res;
+                outputScreen.value = res;
+
+            } catch (error) {
+                outputScreen.value = "Invalid Expression";
+            }
+        }
+
+        function btnClick(value) {
+            if (value == "clear") {
+                outputScreen.value = '';
+            }
+            else if (value == '=') {
+                solveExpression();
+            }
+            else {
+                outputScreen.value += value;
+            }
+        }
+
+
+        // on Enter key press 
+        document.addEventListener('keypress', (event) => {
+            let keyCode = event.keyCode;
+            if (keyCode === 13) {
+                 solveExpression();
+            }
+
+        });
+
+    </script>
+</body>
+
+</html>

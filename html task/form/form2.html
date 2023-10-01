@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .form-main {
+            background-color: aliceblue;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        form{
+            background-color: rgb(4, 56, 152);color: white;padding: 20px; border-radius: 10px;
+        }
+
+        form>div {
+            margin: 5px;
+        }
+
+        .form-main input,
+        .form-main select {
+            padding: 10px;
+            margin: 8px;
+        }
+        .form-main input[type="text"], .form-main input[type="email"], .form-main select, .form-main input[type="date"]{
+            width: 25vw; border-radius: 5px;
+        }
+        .form-main .btns{
+            display: flex;
+            justify-content: center;
+        }
+        form label {
+            display: inline-block;
+            width: 150px;
+        }
+        .outputform label{
+            font-weight: bold;
+        }
+        .error{
+            color: rgb(95, 255, 50);
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="form-main">
+            <form action="" id="myform">
+                <fieldset>
+                    <legend>Survey Form</legend>
+                    <div>
+                        <label for="">First Name : *</label>
+                        <input type="text" placeholder="enter first name" name="fname"  onkeyup="inputHandle(this)">
+                        <span id="fnameErr" class="error"></span>
+                    </div>
+                    <div>
+                        <label for="">Last Name : *</label>
+                        <input type="text" placeholder="enter last name" name="lname" onkeyup="inputHandle(this)">
+                        <span id="lnameErr" class="error"></span>
+                    </div>
+                    <div>
+                        <label for="">Email : *</label>
+                        <input type="email" placeholder="enter email" name="email" onkeyup="inputHandle(this)">
+                        <span id="emailErr" class="error"></span>
+
+                    </div>
+                    <div>
+                        <label for="">Mobile : * </label>
+                        <input name="mobile" type="text" placeholder="enter mobile" onkeyup="inputHandle(this)">
+                        <span id="mobileErr" class="error"></span>
+
+                    </div>
+                    <br>
+                    <div>
+                        <label for="">Date of birth : *</label>
+                        <input name="dob" type="date" placeholder="enter DOB" onchange="inputHandle(this)">
+                        <span id="dobErr" class="error"></span>
+
+                    </div>
+                    <div>
+                        <label for="">Country * </label>
+                        <select name="country" onchange="inputHandle(this)">
+                            <option value="" selected disabled> Select Country</option>
+                            <option value="india">India</option>
+                            <option value="bangladesh">Bangladesh</option>
+                            <option value="southaffrica">South Affrica</option>
+                            <option value="usa">USA</option>
+                            <option value="china">China</option>
+                            <option value="pakistan">Pakistan</option>
+                            <option value="newzeeland">New Zealand</option>
+                        </select>
+                        <span id="countryErr" class="error"></span>
+
+                    </div>
+                    <div>
+                        <label for="">Gender : *</label>
+                        <span> <input type="radio" name="gender" value="male" checked onclick="inputHandle(this)">Male &emsp; <input type="radio"
+                                value="female" name="gender" onclick="inputHandle(this)" > Female </span>
+                        <span id="genderErr" class="error"></span>
+                                
+
+                    </div>
+                    <div>
+                        <label for="">Profession * </label>
+                        <input type="text" placeholder="enter profession" name="profession" onkeyup="inputHandle(this)">
+                        <span id="professionErr" class="error"></span>
+                    </div>
+                    <div class="btns">
+                        <input type="submit" id="submit" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" class="btn btn-warning">
+                        <input type="reset"class="btn btn-dark" >
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div id="modalpopup"></div>
+    </div>
+
+    <script>
+        const nameRegex = /^([a-zA-Z ]){2,30}$/;
+        // const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const emailRegex=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+        const mobileRegex = /^(0|[+91]{3})?[7-9][0-9]{9}$/;
+        nameErr = document.getElementById("nameErr");
+        let formData={'gender':"male"};
+        let closeButton;
+
+
+        //manage popup onsubmit
+        function managePopup(){
+            if(isError()){
+            modalpopup.innerHTML=`
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel"><b>🎉 Congrats ${formData.fname}! </b> Your details has been Submitted</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="myform.reset()"></button>
+
+                          
+                        </div>
+                        <div class="modal-body">
+                          <div class="outputform">
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">Full Name : </label>
+                              <span>${formData.fname+" "+formData.lname}</span>
+                            </div>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">Email : </label>
+                              <span>${formData.email}</span>
+                            </div>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">Mobile : </label>
+                              <span>${formData.mobile}</span>
+                            </div>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label"> DOB :  </label>
+                              <span>${formData.dob}</span>
+                            </div>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">Country : </label>
+                              <span>${formData.country}</span>
+                            </div>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">Gender : </label>
+                              <span>${formData.gender}</span>
+                            </div>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">Profession : </label>
+                              <span>${formData.profession}</span>
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                `
+                closeButton=document.getElementById('closebtn1');
+           }
+           else{
+                modalpopup.innerHTML='';
+            }
+        }
+        function inputHandle(ele){
+           formData[ele.name]=ele.value;
+           managePopup();
+          
+        }
+        function isError(){
+          return Boolean(nameRegex.test(formData.fname)&&nameRegex.test(formData.lname)&&mobileRegex.test(formData.mobile)&&emailRegex.test(formData.email)&&formData.fname&&formData.lname&&formData.mobile&&formData.email&&
+           formData.country&&formData.dob&&formData.profession);
+        }
+        function validate(){
+            !nameRegex.test(formData.fname) ? (fnameErr.innerHTML = "enter valid name") : (fnameErr.innerHTML = "");
+            !nameRegex.test(formData.lname) ? (lnameErr.innerHTML = "enter valid name") : (lnameErr.innerHTML = "");
+            !mobileRegex.test(formData.mobile) ? (mobileErr.innerHTML = "enter valid mobile") : (mobileErr.innerHTML = "");
+            !emailRegex.test(formData.email) ? (emailErr.innerHTML = "enter valid email") : (emailErr.innerHTML = "");
+            !formData.fname?(fnameErr.innerHTML="required"):(null);
+            !formData.lname?(lnameErr.innerHTML="required"):(null);
+            !formData.mobile?(mobileErr.innerHTML="required"):(null);
+            !formData.email?(emailErr.innerHTML="required"):(null);
+            !formData.country?(countryErr.innerHTML="required"):(countryErr.innerHTML="");
+            !formData.dob?(dobErr.innerHTML="required"):((dobErr.innerHTML=""));
+            !formData.profession?(professionErr.innerHTML="required"):(professionErr.innerHTML="");
+            let errorStatus=isError();
+            return errorStatus;
+        }
+        submit.addEventListener('click',function(event){
+            event.preventDefault();
+            validate();
+        })
+       
+       
+        
+    </script>
+</body>
+
+</html>
